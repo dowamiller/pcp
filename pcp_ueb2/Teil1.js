@@ -10,8 +10,9 @@ var canvas;
 var gl;
 var shaderProgram;
 var aVertexPositionId;
-var buffer;
+var posBuffer;
 var aColorId;
+var colorBuffer;
 
 /**
  * Startup function to be called when the body is loaded
@@ -40,26 +41,38 @@ function setUpAttributes(){
 
 function setUpBuffers(){
     "use strict";
-    buffer = gl.createBuffer();
+    posBuffer = gl.createBuffer();
+    colorBuffer = gl.createBuffer();
     var verts = [
-        0,0,    1,0,0,1,
-        1,0,    1,1,0,1,
-        1,1,    1,0,1,1,
-        0,0,    0,0,1,1,
-        -1,0,   0,1,0,1,
-        -1,-1,  1,0,0,1
+        0,0,
+        1,0,
+        1,1,
+        0,0,
+        -1,0,
+        -1,-1
     ];
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+    var  colors = [
+        1,0,0,1,
+        1,1,0,1,
+        1,0,1,1,
+        0,0,1,1,
+        0,1,0,1,
+        1,0,0,1
+    ]
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new  Float32Array(colors), gl.STATIC_DRAW);
 }
 
 function draw() {
     "use strict";
     gl.clear(gl.COLOR_BUFFER_BIT);
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.vertexAttribPointer ( aVertexPositionId , 2, gl.FLOAT , false , 6*4, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
+    gl.vertexAttribPointer ( aVertexPositionId , 2, gl.FLOAT , false , 0, 0);
     gl.enableVertexAttribArray ( aVertexPositionId );
-    gl.vertexAttribPointer( aColorId , 4 , gl.FLOAT,false,6*4,2*4);
+    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+    gl.vertexAttribPointer( aColorId , 4 , gl.FLOAT,false,0,0);
     gl.enableVertexAttribArray ( aColorId );
     gl.drawArrays (gl. TRIANGLES ,0 ,6);
     
