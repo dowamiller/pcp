@@ -45,14 +45,16 @@ function setUpBuffers(){
         0,0,
         1,0,
         1,1,
-        0,1
+        0,0,
+        -1,0,
+        -1,-1
     ];
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
 }
 
 function setUpUniforms(){
-    gl.getUniformLocation(shaderProgram, "uColor");
+    uColorId = gl.getUniformLocation(shaderProgram, "uColor");
 }
 
 function draw() {
@@ -61,7 +63,9 @@ function draw() {
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.vertexAttribPointer ( aVertexPositionId , 2, gl.FLOAT , false , 0, 0);
     gl.enableVertexAttribArray ( aVertexPositionId );
-    gl.uniform4f(uColorId, 0,1,1,1);
-    gl.drawArrays (gl. LINE_LOOP ,0 ,4);
+    gl.uniform4f(uColorId, 0,1,0,1);
+    gl.drawArrays (gl. TRIANGLES ,0 ,3);
+    gl.uniform4f(uColorId, 1,0,1,1);
+    gl.drawArrays (gl. TRIANGLES ,3 ,3);
     
 }
