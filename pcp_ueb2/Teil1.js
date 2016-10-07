@@ -11,7 +11,7 @@ var gl;
 var shaderProgram;
 var aVertexPositionId;
 var buffer;
-var uColorId;
+var aColorId;
 
 /**
  * Startup function to be called when the body is loaded
@@ -30,42 +30,37 @@ function initGL() {
     gl.clearColor(0,0,0,1);
     setUpAttributes();
     setUpBuffers();
-    setUpUniforms();
 }
 
 function setUpAttributes(){
     "use strict";
     aVertexPositionId = gl.getAttribLocation(shaderProgram , 'aVertexPosition');
+    aColorId = gl. getAttribLocation(shaderProgram,'aColor');
 }
 
 function setUpBuffers(){
     "use strict";
     buffer = gl.createBuffer();
     var verts = [
-        0,0,
-        1,0,
-        1,1,
-        0,0,
-        -1,0,
-        -1,-1
+        0,0,    1,0,0,1,
+        1,0,    1,1,0,1,
+        1,1,    1,0,1,1,
+        0,0,    0,0,1,1,
+        -1,0,   0,1,0,1,
+        -1,-1,  1,0,0,1
     ];
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
-}
-
-function setUpUniforms(){
-    uColorId = gl.getUniformLocation(shaderProgram, "uColor");
 }
 
 function draw() {
     "use strict";
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.vertexAttribPointer ( aVertexPositionId , 2, gl.FLOAT , false , 0, 0);
+    gl.vertexAttribPointer ( aVertexPositionId , 2, gl.FLOAT , false , 6*4, 0);
     gl.enableVertexAttribArray ( aVertexPositionId );
-    gl.uniform4f(uColorId, 0,1,0,1);
-    gl.drawArrays (gl. TRIANGLES ,0 ,3);
-    gl.uniform4f(uColorId, 1,0,1,1);
-    gl.drawArrays (gl. TRIANGLES ,3 ,3);
+    gl.vertexAttribPointer( aColorId , 4 , gl.FLOAT,false,6*4,2*4);
+    gl.enableVertexAttribArray ( aColorId );
+    gl.drawArrays (gl. TRIANGLES ,0 ,6);
     
 }
