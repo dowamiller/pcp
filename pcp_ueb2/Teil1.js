@@ -18,7 +18,8 @@ var colorBuffer;
 var cirlceVerts;
 var cirlceColors;
 var rotInRadians = 0;
-var uMatrixId;
+var uRotMatrixId;
+var uScaleMatrixId;
 var start = null;
 
 /**
@@ -48,7 +49,8 @@ function setUpAttributes(){
 }
 
 function setUpUniforms(){
-    uMatrixId = gl.getUniformLocation(shaderProgram, 'uMatrix');
+    uRotMatrixId = gl.getUniformLocation(shaderProgram, 'uRotMatrix');
+    uScaleMatrixId = gl.getUniformLocation(shaderProgram, 'uScaleMatrix');
 }
 
 function setUpBuffers(){
@@ -57,24 +59,8 @@ function setUpBuffers(){
     colorCircle();
     posBuffer = gl.createBuffer();
     colorBuffer = gl.createBuffer();
-    var verts = [
-        0,0,
-        1,0,
-        1,1,
-        0,0,
-        -1,0,
-        -1,-1
-    ];
     gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, cirlceVerts, gl.STATIC_DRAW);
-    var  colors = [
-        1,0,0,1,
-        1,1,0,1,
-        1,0,1,1,
-        0,0,1,1,
-        0,1,0,1,
-        1,0,0,1
-    ]
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, cirlceColors, gl.STATIC_DRAW);
 }
@@ -90,8 +76,8 @@ function draw() {
     gl.enableVertexAttribArray (aColorId);
     var rotMatrix = makeRotation(rotInRadians);
     var scaleMatrix = makeScale(canvas.height / canvas.width,1);
-    //var matrix =
-    gl.uniformMatrix3fv(uMatrixId, false, rotMatrix);
+    gl.uniformMatrix3fv(uRotMatrixId, false, rotMatrix);
+    gl.uniformMatrix3fv(uScaleMatrixId, false, scaleMatrix);
     gl.drawArrays (gl. TRIANGLE_FAN ,0 ,362);
 
 }
@@ -113,16 +99,16 @@ function colorCircle(){
     cirlceColors = new Float32Array(362*4);
     var deg = 0;
     var i = 0;
-    cirlceColors[i++]= 0;
-    cirlceColors[i++]= 0;
-    cirlceColors[i++]= 0;
+    cirlceColors[i++]= 1;
+    cirlceColors[i++]= 1;
+    cirlceColors[i++]= 1;
     cirlceColors[i++]= 1;
     do {
-        cirlceColors[i++]= Math.sin((Math.PI / 180)*deg);
-        cirlceColors[i++]= Math.sin((Math.PI / 180)*deg);
         cirlceColors[i++]= 0;
+        cirlceColors[i++]= Math.sin((Math.PI / 180)*deg);
+        cirlceColors[i++]= 0 ;
         cirlceColors[i++]= 1;
-        deg = deg+3;
+        deg = deg+2;
     }while(i<(362*4)-1)
 }
 
@@ -142,6 +128,7 @@ function makeScale(sx, sy) {
         0, sy, 0,
         0, 0, 1
     ];
+}
 
 function drawAnimated ( timeStamp ) {
     if(!start) start = timeStamp;
