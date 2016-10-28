@@ -140,7 +140,7 @@ function draw() {
 
     //orthoprojectcion
     var matrix = mat4.create();
-    mat4.ortho(matrix, 0, canvas.width, canvas.height, 0, 0, 0);
+    mat4.ortho(matrix, 0, canvas.width, canvas.height, 0, -1, 1);
     matrixStack.push(matrix);
 
     //drawMiddelLine
