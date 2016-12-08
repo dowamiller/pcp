@@ -91,6 +91,7 @@ function setUpBuffers(){
 function draw() {
     "use strict";
     gl.clear(gl.COLOR_BUFFER_BIT);
+    
 
 
     var modelMatrix = mat4.create();
