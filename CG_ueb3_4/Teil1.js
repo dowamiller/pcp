@@ -18,7 +18,6 @@ var lightColor = [1,1,1];
 
 //animation
 var oldTime = null;
-twoPlayerMode = false;
 var rotAngle = 0;
 
 /**
