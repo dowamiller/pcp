@@ -13,8 +13,8 @@ var cube;
 var sphere;
 
 //beleuchtung
-var lightPosition = [0,-10,5];
-var lightColor = [1,1,1];
+var lightPosition = [0,-10,10];
+var lightColor = [0.9,0.9,0.9];
 
 //animation
 var oldTime = null;
@@ -56,7 +56,7 @@ function setUpUniforms(){
 }
 
 function initObjects(){
-    cube = defineCube(gl, [1, 0, 0], [1, 1, 0], [1, 0, 1], [0, 1, 1], [0, 0, 1], [0, 1, 0], 5);
+    cube = defineCube(gl, [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], 5);
     sphere = defineSphere(gl, 100, 100);
 }
 
@@ -68,21 +68,21 @@ function draw() {
     gl.enable(gl.CULL_FACE);
 
     var projectionMatrix = mat4.create();
-    mat4.frustum(projectionMatrix,-2,2,-2,2,2,20);
+    mat4.frustum(projectionMatrix,-1,1,-canvas.height/canvas.width,canvas.height/canvas.width,1,20);
 
     var viewMatrix = mat4.create();
     mat4.lookAt(viewMatrix,[0,-10,0],[0,0,0],[0,0,1]);
 
     setLights(viewMatrix);
 
-    gl.viewport(canvas.width/2, 0, canvas.width/2, canvas.height);
     var modelMatrix = mat4.create();
-    mat4.scale(modelMatrix, modelMatrix, [4, 4, 4]);
-    drawSphere(gl, sphere, [1, 1, 1], shaderProgram, modelMatrix, viewMatrix, projectionMatrix);
+    mat4.translate(modelMatrix, modelMatrix,[4,0,0]);
+    mat4.scale(modelMatrix, modelMatrix, [3, 3, 3]);
+    drawSphere(gl, sphere, [1, 0, 0], shaderProgram, modelMatrix, viewMatrix, projectionMatrix);
 
-    gl.viewport(0, 0, canvas.width/2, canvas.height);
     modelMatrix = mat4.create();
-    mat4.scale(modelMatrix, modelMatrix, [5,5,5]);
+    mat4.translate(modelMatrix, modelMatrix,[-4,0,0]);
+    mat4.scale(modelMatrix, modelMatrix, [4,4,4]);
     mat4.rotate(modelMatrix,modelMatrix,rotAngle,[-1,0.5,1]);
     drawCube(gl, cube, shaderProgram,modelMatrix, viewMatrix, projectionMatrix);
 }

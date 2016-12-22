@@ -1,7 +1,7 @@
 attribute vec3 aVertexPosition;
-attribute vec3 aColor;
+attribute vec4 aColor;
 attribute vec3 aNormal;
-varying vec3 vColor;
+varying vec4 vColor;
 varying vec3 vNormal;
 varying vec3 vVertexPosition;
 uniform mat4 uModelViewMatrix;

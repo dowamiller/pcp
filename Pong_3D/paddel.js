@@ -30,40 +30,69 @@ function definePaddelColor(gl, paddelColor) {
     return bufferColor;
 }
 
-function definePaddelNormals(gl) {
+function definePaddelNormals(gl, normal) {
     "use strict";
-    var paddelNormal = [0.0, 0.0, -1.0];
+    var paddelNormal = [0.0, 0.0, 1.0];
     // make 4 entries, one for each vertex
-    var allVertsNormal = padelNormal.concat(padelNormal, padelNormal, padelNormal);
+    var allVertsNormal = normal.concat(normal, normal, normal);
     var bufferNormals = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferNormals);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(allSidesNormal), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(allVertsNormal), gl.STATIC_DRAW);
     return bufferNormals;
 }
 
-function drawPaddel(gl, paddel, aVertexPositionId, aVertexColorId, aVertexNormalId) {
+function drawPaddel(gl, paddel, shaderProgramm, viewMatrix, projectionMatrix) {
     "use strict";
+    var modelMatrix = mat4.create();
+    mat4.translate(modelMatrix,modelMatrix, paddel.position);
+    mat4.scale(modelMatrix, modelMatrix, paddel.size);
+    //mat4.rotate(modelMatrix,modelMatrix, Math.PI/4, [1,0,0]);
+    var modelViewMatrix = mat4.create();
+    mat4.multiply(modelViewMatrix,viewMatrix,modelMatrix);
+    gl.uniformMatrix4fv( shaderProgram.modelViewMatrixId ,false, modelViewMatrix);
+
+    gl.uniformMatrix4fv( shaderProgram.projectionMatrixId ,false, projectionMatrix);
+
+    var normalMatrix= mat3.create();
+    mat3.normalFromMat4(normalMatrix, modelViewMatrix);
+    gl.uniformMatrix3fv(shaderProgram.normalMatrixId, false, normalMatrix);
+
     gl.bindBuffer(gl.ARRAY_BUFFER, paddel.bufferColor);
-    gl.vertexAttribPointer(aVertexColorId, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(aVertexColorId);
+    gl.vertexAttribPointer(shaderProgramm.aColorId, 4, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(shaderProgramm.aColorId);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, paddel.bufferNormals);
-    gl.vertexAttribPointer(aVertexNormalId, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(aVertexNormalId);
+    gl.vertexAttribPointer(shaderProgramm.aNormalId, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(shaderProgramm.aNormalId);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, paddel.bufferVertices);
-    gl.vertexAttribPointer(aVertexPositionId, 3, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(aVertexPositionId);
+    gl.vertexAttribPointer(shaderProgramm.aVertexPositionId, 3, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(shaderProgramm.aVertexPositionId);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 
-function definePaddel(gl, paddelColor, paddelPosition) {
+
+function definePaddel(gl, paddelColor, paddelPosition, paddelSize) {
     var paddel = {};
+    paddel.normal = [0.0, 0.0, -1.0];
     paddel.bufferVertices = definePaddelVertices(gl);
     paddel.bufferColor = definePaddelColor(gl,paddelColor);
-    paddel.bufferNormals = definePaddelNormals(gl);
+    paddel.bufferNormals = definePaddelNormals(gl, paddel.normal);
     paddel.position = paddelPosition;
     paddel.size = paddelSize;
-    paddel.speed = [0, 0, 0];
+    paddel.direction = [0, 0];
+    paddel.speed = 3;
     return paddel;
 }
+
+function updatePaddle(paddel, deltaTime){
+    var normalizedDirection = vec2.create();
+    vec2.normalize(normalizedDirection, new Float32Array(paddel.direction));
+    paddel.position[0] += normalizedDirection[0] * paddel.speed * deltaTime;
+    paddel.position[1] += normalizedDirection[1] * paddel.speed * deltaTime;
+}
+
+
+
+
+
